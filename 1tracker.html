@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ultimate Tracker Pro</title>
+
+<style>
+
+:root{
+--bg:#13151f;
+--card:#232946;
+--accent:#7c3aed;
+--text:white;
+}
+
+body{
+margin:0;
+font-family:Segoe UI,sans-serif;
+background:var(--bg);
+color:var(--text);
+overflow:hidden;
+transition:0.3s;
+}
+
+/* HEADER */
+
+header{
+height:60px;
+display:flex;
+align-items:center;
+justify-content:center;
+background:#1b1f30;
+font-size:22px;
+font-weight:bold;
+position:fixed;
+top:0;
+width:100%;
+z-index:1000;
+border-bottom:1px solid #333;
+}
+
+/* MAIN */
+
+.main{
+display:flex;
+height:calc(100vh - 60px);
+margin-top:60px;
+}
+
+/* LEFT */
+
+.left{
+flex:1;
+overflow:auto;
+padding:15px;
+}
+
+/* TOP */
+
+.top-bar{
+position:sticky;
+top:0;
+background:rgba(20,20,30,0.9);
+backdrop-filter:blur(10px);
+padding:10px;
+border-radius:14px;
+display:flex;
+gap:10px;
+align-items:center;
+overflow:auto;
+z-index:50;
+margin-bottom:15px;
+}
+
+.top-bar button,
+.sidebar button{
+border:none;
+padding:8px 12px;
+border-radius:10px;
+background:var(--accent);
+color:white;
+cursor:pointer;
+}
+
+.top-bar input{
+padding:8px;
+border:none;
+border-radius:10px;
+background:#2f3555;
+color:white;
+}
+
+/* ACCESS */
+
+.access{
+display:flex;
+gap:6px;
+}
+
+/* PROGRESS */
+
+.progress-wrap{
+flex:1;
+height:24px;
+background:#222;
+border-radius:20px;
+overflow:hidden;
+cursor:pointer;
+}
+
+.progress{
+height:100%;
+width:0%;
+background:linear-gradient(90deg,#22c55e,#06b6d4);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:12px;
+transition:0.3s;
+}
+
+/* SECTION */
+
+.section{
+margin-bottom:20px;
+background:rgba(255,255,255,0.03);
+padding:10px;
+border-radius:14px;
+}
+
+.section-head{
+display:flex;
+justify-content:space-between;
+align-items:center;
+cursor:pointer;
+}
+
+.section-grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(110px,1fr));
+gap:8px;
+margin-top:10px;
+}
+
+.section-grid.closed{
+display:none;
+}
+
+.section-date{
+font-size:12px;
+color:#90ee90;
+}
+
+/* BOX */
+
+label{
+background:var(--card);
+padding:8px;
+border-radius:10px;
+display:flex;
+align-items:center;
+gap:6px;
+position:relative;
+cursor:pointer;
+transition:0.2s;
+}
+
+label:hover{
+transform:scale(1.03);
+}
+
+label.hidden-filter{
+display:none !important;
+}
+
+label input:checked + span{
+color:#facc15;
+font-weight:bold;
+}
+
+/* AGE COLORS */
+
+.new{
+background:#14532d !important;
+}
+
+.mid{
+background:#1d4ed8 !important;
+}
+
+.old{
+background:#581c87 !important;
+}
+
+.veryold{
+background:#2b2b2b !important;
+}
+
+/* HOVER */
+
+.hover{
+position:absolute;
+bottom:110%;
+left:50%;
+transform:translateX(-50%);
+background:#111827;
+padding:5px 8px;
+border-radius:8px;
+font-size:11px;
+opacity:0;
+transition:0.2s;
+white-space:nowrap;
+pointer-events:none;
+z-index:100;
+}
+
+label:hover .hover{
+opacity:1;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+position:fixed;
+right:-330px;
+top:60px;
+width:310px;
+height:calc(100vh - 60px);
+background:#181b2c;
+border-left:1px solid #333;
+transition:0.3s;
+padding:15px;
+overflow:auto;
+z-index:999;
+}
+
+.sidebar.open{
+right:0;
+}
+
+.toggle{
+position:fixed;
+right:15px;
+top:75px;
+z-index:1001;
+border:none;
+background:var(--accent);
+color:white;
+padding:10px 14px;
+border-radius:12px;
+cursor:pointer;
+}
+
+.sidebar textarea,
+.sidebar input,
+.sidebar select{
+width:100%;
+padding:8px;
+margin-bottom:8px;
+border:none;
+border-radius:10px;
+background:#2f3555;
+color:white;
+}
+
+.history{
+background:#22283f;
+padding:10px;
+border-radius:12px;
+max-height:250px;
+overflow:auto;
+}
+
+.entry{
+border-bottom:1px solid #444;
+padding:8px 0;
+}
+
+/* QUICK */
+
+.quick{
+position:fixed;
+bottom:20px;
+left:20px;
+display:flex;
+flex-direction:column;
+gap:10px;
+z-index:1000;
+}
+
+.quick button{
+border:none;
+padding:12px;
+border-radius:50px;
+background:#06b6d4;
+color:white;
+cursor:pointer;
+}
+
+/* CHATBOT */
+
+.chat-toggle{
+position:fixed;
+bottom:20px;
+right:20px;
+width:50px;
+height:50px;
+border-radius:50%;
+background:var(--accent);
+color:white;
+border:none;
+font-size:22px;
+cursor:pointer;
+z-index:1001;
+box-shadow:0 4px 12px rgba(0,0,0,0.3);
+display:flex;
+align-items:center;
+justify-content:center;
+transition:transform 0.2s;
+}
+
+.chat-toggle:hover{
+transform:scale(1.1);
+}
+
+.chat-box{
+position:fixed;
+bottom:80px;
+right:20px;
+width:350px;
+height:460px;
+background:#181b2c;
+border:1px solid #333;
+border-radius:16px;
+display:none;
+flex-direction:column;
+z-index:1000;
+box-shadow:0 8px 24px rgba(0,0,0,0.5);
+overflow:hidden;
+}
+
+.chat-box.open{
+display:flex;
+}
+
+.chat-header{
+background:#1b1f30;
+padding:12px;
+font-weight:bold;
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-bottom:1px solid #333;
+}
+
+.chat-header-actions{
+display:flex;
+gap:8px;
+align-items:center;
+}
+
+.chat-header button{
+background:none;
+border:none;
+color:#aaa;
+font-size:16px;
+cursor:pointer;
+padding:2px 6px;
+border-radius:6px;
+}
+
+.chat-header button:hover{
+color:#fff;
+background:rgba(255,255,255,0.1);
+}
+
+.chat-messages{
+flex:1;
+padding:12px;
+overflow-y:auto;
+display:flex;
+flex-direction:column;
+gap:8px;
+font-size:13px;
+}
+
+.msg{
+max-width:85%;
+padding:8px 12px;
+border-radius:12px;
+line-height:1.4;
+word-wrap:break-word;
+}
+
+.msg.bot{
+background:#2a304e;
+color:#fff;
+align-self:flex-start;
+border-bottom-left-radius:2px;
+}
+
+.msg.user{
+background:var(--accent);
+color:#fff;
+align-self:flex-end;
+border-bottom-right-radius:2px;
+}
+
+.chat-input{
+display:flex;
+padding:8px;
+background:#1b1f30;
+border-top:1px solid #333;
+gap:6px;
+align-items:center;
+}
+
+.chat-input input{
+flex:1;
+padding:8px 12px;
+border-radius:10px;
+border:none;
+background:#2f3555;
+color:white;
+font-size:13px;
+}
+
+.chat-input button{
+border:none;
+background:var(--accent);
+color:white;
+padding:8px 12px;
+border-radius:10px;
+cursor:pointer;
+}
+
+.mic-btn{
+background:#06b6d4 !important;
+border-radius:50% !important;
+width:36px;
+height:36px;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:0 !important;
+font-size:16px;
+transition:0.2s;
+}
+
+.mic-btn.listening{
+background:#ef4444 !important;
+animation:pulse 1s infinite alternate;
+}
+
+@keyframes pulse{
+0%{ transform:scale(1); }
+100%{ transform:scale(1.15); }
+}
+
+/* MOBILE */
+
+@media(max-width:700px){
+
+.section-grid{
+grid-template-columns:repeat(auto-fill,minmax(90px,1fr));
+}
+
+.top-bar{
+flex-wrap:wrap;
+}
+
+.sidebar{
+width:100%;
+right:-100%;
+}
+
+.chat-box{
+width:calc(100vw - 40px);
+right:20px;
+}
+
+}
+
+/* MINI */
+
+.mini{
+background:rgba(255,255,255,0.04);
+padding:10px;
+border-radius:14px;
+margin-bottom:15px;
+}
+
+.mini-controls{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.mini-controls button{
+background:#06b6d4;
+border:none;
+padding:8px 12px;
+border-radius:10px;
+color:white;
+cursor:pointer;
+}
+
+#miniValue{
+font-size:20px;
+font-weight:bold;
+}
+
+/* CALENDAR */
+
+.calendar{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:4px;
+margin-top:10px;
+}
+
+.day{
+height:18px;
+border-radius:4px;
+background:#333;
+}
+
+.day.low{background:#14532d;}
+.day.mid{background:#1d4ed8;}
+.day.high{background:#7c3aed;}
+
+</style>
+</head>
+
+<body>
+
+<header>Ultimate Tracker Pro</header>
+
+<button class="toggle" onclick="toggleSidebar()">☰</button>
+
+<div class="sidebar" id="sidebar">
+
+<h3>Theme</h3>
+
+<select id="themeSelect" onchange="setTheme(this.value)">
+<option value="default">Default</option>
+<option value="amoled">AMOLED</option>
+<option value="matrix">Matrix</option>
+<option value="light">Light</option>
+</select>
+
+<h3>Notes</h3>
+
+<textarea id="notes"></textarea>
+
+<button onclick="saveToday()">Save Today</button>
+
+<h3>Search History</h3>
+
+<input id="searchHistory" oninput="filterHistory()">
+
+<div class="history" id="history"></div>
+
+<h3>Analytics</h3>
+
+<div id="stats"></div>
+
+<h3>Calendar</h3>
+
+<div class="calendar" id="calendar"></div>
+
+</div>
+
+<div class="main">
+
+<div class="left">
+
+<div class="top-bar">
+
+<div class="access" id="access"></div>
+
+<button onclick="undo()">↶ Undo</button>
+
+<input id="searchBox" placeholder="25k / 12000">
+
+<button onclick="jump()">Jump</button>
+
+<button onclick="toggleSound()">🔊</button>
+
+<div class="progress-wrap" onclick="scrollHighest()">
+<div class="progress" id="progress">0%</div>
+</div>
+
+</div>
+
+<div class="mini">
+
+<h3>Mini Progress</h3>
+
+<div class="mini-controls">
+
+<button onclick="miniStep(-10)">-10</button>
+
+<div id="miniValue">0</div>
+
+<button onclick="miniStep(10)">+10</button>
+
+</div>
+
+<div id="miniDisplay"></div>
+
+</div>
+
+<div id="tracker"></div>
+
+</div>
+
+</div>
+
+<div class="quick">
+
+<button onclick="quickAdd(100)">+100</button>
+<button onclick="quickAdd(500)">+500</button>
+<button onclick="quickAdd(1000)">+1000</button>
+
+</div>
+
+<!-- TALKING COMMAND CHATBOT UI -->
+
+<button class="chat-toggle" onclick="toggleChat()">💬</button>
+
+<div class="chat-box" id="chatBox">
+<div class="chat-header">
+<span>Voice Assistant</span>
+<div class="chat-header-actions">
+<button id="ttsToggle" onclick="toggleTTS()" title="Toggle Voice Output">🔊 Voice ON</button>
+<button onclick="toggleChat()">✕</button>
+</div>
+</div>
+<div class="chat-messages" id="chatMessages">
+<div class="msg bot">🎙️ Hi! Try speaking or typing commands! Say <b>"commands"</b> to see everything I can do.</div>
+</div>
+<div class="chat-input">
+<button class="mic-btn" id="micBtn" onclick="toggleVoiceInput()" title="Hold/Click to Speak">🎤</button>
+<input type="text" id="chatInput" placeholder="Type or speak a command..." onkeydown="handleChatKey(event)">
+<button onclick="sendChatMessage()">Send</button>
+</div>
+</div>
+
+<script>
+
+const tracker=document.getElementById("tracker");
+const progress=document.getElementById("progress");
+
+let saved=JSON.parse(localStorage.getItem("checked")||"{}");
+let history=JSON.parse(localStorage.getItem("history")||"{}");
+
+let checkboxes=[];
+let undoState=null;
+let sound=true;
+let ttsEnabled=true;
+
+let mini=Number(localStorage.getItem("mini")||0);
+
+/* SIDEBAR */
+
+function toggleSidebar(){
+document.getElementById("sidebar")
+.classList.toggle("open");
+}
+
+/* VOICE & CHATBOT CONTROLLER */
+
+let recognition = null;
+let isListening = false;
+
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+recognition = new SpeechRecognition();
+recognition.continuous = false;
+recognition.interimResults = false;
+recognition.lang = 'en-US';
+
+recognition.onstart = function() {
+isListening = true;
+const micBtn = document.getElementById("micBtn");
+micBtn.classList.add("listening");
+micBtn.innerText = "🔴";
+};
+
+recognition.onend = function() {
+isListening = false;
+const micBtn = document.getElementById("micBtn");
+micBtn.classList.remove("listening");
+micBtn.innerText = "🎤";
+};
+
+recognition.onresult = function(event) {
+const transcript = event.results[0][0].transcript;
+document.getElementById("chatInput").value = transcript;
+sendChatMessage();
+};
+
+recognition.onerror = function(event) {
+console.error("Speech Recognition Error:", event.error);
+isListening = false;
+const micBtn = document.getElementById("micBtn");
+micBtn.classList.remove("listening");
+micBtn.innerText = "🎤";
+};
+}
+
+function toggleVoiceInput() {
+if (!recognition) {
+alert("Voice recognition is not supported in this browser. Please use Chrome, Edge, or Safari.");
+return;
+}
+if (isListening) {
+recognition.stop();
+} else {
+recognition.start();
+}
+}
+
+function toggleTTS() {
+ttsEnabled = !ttsEnabled;
+const btn = document.getElementById("ttsToggle");
+btn.innerText = ttsEnabled ? "🔊 Voice ON" : "🔇 Voice OFF";
+if(!ttsEnabled && 'speechSynthesis' in window) {
+window.speechSynthesis.cancel();
+}
+}
+
+function speakText(text) {
+if (!ttsEnabled || !('speechSynthesis' in window)) return;
+const plainText = text.replace(/<[^>]*>?/gm, '');
+window.speechSynthesis.cancel();
+const utterance = new SpeechSynthesisUtterance(plainText);
+utterance.rate = 1.0;
+utterance.pitch = 1.0;
+window.speechSynthesis.speak(utterance);
+}
+
+function toggleChat(){
+const chatBox=document.getElementById("chatBox");
+chatBox.classList.toggle("open");
+}
+
+function handleChatKey(e){
+if(e.key==="Enter"){
+sendChatMessage();
+}
+}
+
+function sendChatMessage(){
+const input=document.getElementById("chatInput");
+const text=input.value.trim();
+if(!text) return;
+
+addMessage(text,"user");
+input.value="";
+
+setTimeout(()=>{
+const botReply=executeBotCommand(text);
+addMessage(botReply,"bot");
+speakText(botReply);
+},200);
+}
+
+function addMessage(text,type){
+const container=document.getElementById("chatMessages");
+const msg=document.createElement("div");
+msg.className="msg "+type;
+msg.innerHTML=text;
+container.appendChild(msg);
+container.scrollTop=container.scrollHeight;
+}
+
+/* EXPANDED COMMAND ENGINE */
+
+function executeBotCommand(q){
+const orig = q.trim();
+q = q.toLowerCase();
+
+q = q.replace(/thousand/g, "k").replace(/hundred/g, "00");
+
+// 1. MINI PROGRESS COMMANDS (FIXED)
+if(q.includes("mini")){
+if(q.includes("reset") || q.includes("clear") || q.includes("zero")){
+mini = 0;
+updateMini();
+return "Mini progress has been reset to 0.";
+}
+
+const match = q.match(/-?\d+/);
+if(match){
+const val = Number(match[0]);
+if(q.includes("add") || q.includes("plus") || q.includes("increase")){
+miniStep(val);
+return `Added ${val} to mini progress. New value: ${mini}.`;
+} else if(q.includes("minus") || q.includes("sub") || q.includes("decrease")){
+miniStep(-val);
+return `Subtracted ${val} from mini progress. New value: ${mini}.`;
+} else {
+mini = val;
+if(mini < 0) mini = 0;
+updateMini();
+return `Mini progress set to ${mini}.`;
+}
+}
+return `Current Mini Progress is ${mini}. Say "add mini 20" or "mini 50".`;
+}
+
+// 2. NAVIGATION & SEARCH
+if(q.includes("jump") || q.includes("search") || q.includes("find") || q.includes("go to")){
+const match = q.match(/\d+k|\d+/);
+if(match){
+document.getElementById("searchBox").value = match[0];
+jump();
+return `Jumped to section ${match[0]}!`;
+}
+return "Specify a target like: 'jump 15k'.";
+}
+
+// 3. QUICK ADD / SUBTRACT
+if(q.includes("add") || q.includes("plus") || q.includes("increase")){
+const match = q.match(/\d+/);
+if(match){
+const val = Number(match[0]);
+quickAdd(val);
+return `Added ${val} to your tracker!`;
+}
+return "Specify an amount, e.g., 'add 500'.";
+}
+
+// 4. BULK CHECK / UNCHECK
+if(q.includes("check up to") || q.includes("fill up to")){
+const match = q.match(/\d+k|\d+/);
+if(match){
+let target = match[0];
+if(target.includes("k")) target = parseFloat(target)*1000;
+target = Number(target);
+animateFill(target, true);
+return `Checked all items up to ${target}!`;
+}
+}
+
+if(q.includes("uncheck all") || q.includes("reset tracker") || q.includes("clear all")){
+undoState = JSON.stringify(saved);
+checkboxes.forEach(cb => cb.checked = false);
+update();
+return "Cleared all checked items across the tracker.";
+}
+
+// 5. FILTERING & VISIBILITY
+if(q.includes("show completed") || q.includes("show checked") || q.includes("filter checked")){
+checkboxes.forEach(cb => {
+cb.parentElement.classList.toggle("hidden-filter", !cb.checked);
+});
+return "Now showing ONLY completed items.";
+}
+
+if(q.includes("show unchecked") || q.includes("show pending") || q.includes("filter pending")){
+checkboxes.forEach(cb => {
+cb.parentElement.classList.toggle("hidden-filter", cb.checked);
+});
+return "Now showing ONLY unchecked items.";
+}
+
+if(q.includes("show all") || q.includes("reset filter") || q.includes("clear filter")){
+checkboxes.forEach(cb => {
+cb.parentElement.classList.remove("hidden-filter");
+});
+return "Filter reset. Showing all items.";
+}
+
+// 6. SECTION CONTROLS (Expand / Collapse)
+if(q.includes("expand") || q.includes("open section")){
+const match = q.match(/\d+k|\d+/);
+if(match){
+let target = match[0];
+if(target.includes("k")) target = parseFloat(target)*1000;
+const secHeader = document.querySelector(`#sec${target} .section-head`);
+if(secHeader){
+const grid = document.querySelector(`#sec${target} .section-grid`);
+if(grid.classList.contains("closed")) secHeader.click();
+secHeader.scrollIntoView({behavior:"smooth", block:"center"});
+return `Expanded section ${match[0]}!`;
+}
+}
+return "Could not find that section.";
+}
+
+if(q.includes("collapse") || q.includes("close section")){
+const match = q.match(/\d+k|\d+/);
+if(match){
+let target = match[0];
+if(target.includes("k")) target = parseFloat(target)*1000;
+const secHeader = document.querySelector(`#sec${target} .section-head`);
+if(secHeader){
+const grid = document.querySelector(`#sec${target} .section-grid`);
+if(!grid.classList.contains("closed")) secHeader.click();
+return `Collapsed section ${match[0]}!`;
+}
+}
+return "Could not find that section.";
+}
+
+// 7. THEMES
+if(q.includes("theme") || q.includes("mode")){
+let selectedTheme = "";
+if(q.includes("amoled") || q.includes("dark")) selectedTheme = "amoled";
+else if(q.includes("matrix") || q.includes("green")) selectedTheme = "matrix";
+else if(q.includes("light") || q.includes("white")) selectedTheme = "light";
+else if(q.includes("default")) selectedTheme = "default";
+
+if(selectedTheme){
+setTheme(selectedTheme);
+document.getElementById("themeSelect").value = selectedTheme;
+return `Switched theme to ${selectedTheme.toUpperCase()}!`;
+}
+return "Available themes: default, amoled, matrix, light.";
+}
+
+// 8. NOTES & ANNOTATIONS
+if(q.startsWith("add note") || q.startsWith("note")){
+const numMatch = q.match(/\d+k|\d+/);
+if(numMatch){
+let target = numMatch[0];
+let cleanNum = target;
+if(target.includes("k")) cleanNum = parseFloat(target)*1000;
+cleanNum = Number(cleanNum);
+
+const noteText = orig.replace(/add note|note/i, "").replace(numMatch[0], "").trim();
+if(noteText){
+localStorage.setItem("note-" + cleanNum, noteText);
+const hover = document.querySelector(`input[value="${cleanNum}"] ~ .hover`);
+if(hover){
+const d = localStorage.getItem("date-" + cleanNum) || "";
+hover.innerHTML = d + "<br>📝 " + noteText;
+}
+return `Added note to ${target}: "${noteText}"`;
+}
+}
+return "Usage: 'note 15000 completed running today'";
+}
+
+if(q.includes("clear notes") || q.includes("delete sidebar note")){
+document.getElementById("notes").value = "";
+return "Cleared sidebar note pad.";
+}
+
+// 9. ANALYTICS & STATS INQUIRIES
+if(q.includes("how many") || q.includes("count")){
+let checkedCount = checkboxes.filter(c => c.checked).length;
+return `You have checked ${checkedCount} out of ${checkboxes.length} total items.`;
+}
+
+if(q.includes("percentage") || q.includes("progress percent")){
+return `Your current overall progress is ${progress.innerText}.`;
+}
+
+if(q.includes("status") || q.includes("stats") || q.includes("highest")){
+const highest = Number(progress.dataset.highest||0);
+return `Highest achieved checkpoint is ${highest}. Total completion is ${progress.innerText}. Mini is ${mini}.`;
+}
+
+// 10. SYSTEM CONTROLS
+if(q.includes("sound") || q.includes("mute") || q.includes("audio")){
+toggleSound();
+return `Sound effects are now ${sound ? "enabled" : "muted"}.`;
+}
+
+if(q.includes("sidebar") || q.includes("menu")){
+toggleSidebar();
+return "Toggled sidebar.";
+}
+
+if(q.includes("undo")){
+undo();
+return "Reverted your last action!";
+}
+
+if(q.includes("save")){
+saveToday();
+return "Saved today's record into history!";
+}
+
+if(q.includes("time") || q.includes("date")){
+return `Today is ${new Date().toLocaleDateString()} and time is ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}.`;
+}
+
+// 11. COMMAND LIST & HELP
+if(q.includes("command") || q.includes("help")){
+return `<b>Available Command Types:</b><br>` +
+`• <b>Mini Progress:</b> <i>"add mini 20"</i>, <i>"mini 50"</i>, <i>"reset mini"</i><br>` +
+`• <b>Nav:</b> <i>"jump 15k"</i>, <i>"expand section 10k"</i><br>` +
+`• <b>Check:</b> <i>"add 500"</i>, <i>"check up to 10k"</i><br>` +
+`• <b>Filter:</b> <i>"show checked"</i>, <i>"show all"</i><br>` +
+`• <b>Note:</b> <i>"note 12000 done"</i><br>` +
+`• <b>Stats:</b> <i>"how many checked?"</i>, <i>"percentage"</i><br>` +
+`• <b>Theme:</b> <i>"theme matrix"</i>, <i>"light mode"</i>`;
+}
+
+if(q.includes("hello") || q.includes("hi") || q.includes("hey")){
+return "Hello! I am your AI tracker assistant. Say 'commands' to see what I can do.";
+}
+
+// DIRECT NUMERIC JUMP FALLBACK
+const directNum = q.match(/^\d+k?$/);
+if(directNum){
+document.getElementById("searchBox").value = directNum[0];
+jump();
+return `Jumped directly to ${directNum[0]}!`;
+}
+
+return "Unrecognized command. Type or say <b>'commands'</b> to view available commands.";
+}
+
+/* SOUND EFFECTS */
+
+function play(){
+if(!sound) return;
+const a=new Audio("https://actions.google.com/sounds/v1/cartoon/pop.ogg");
+a.volume=0.2;
+a.play();
+}
+
+function toggleSound(){
+sound=!sound;
+}
+
+/* ACCESS */
+
+for(let i=5000;i<=50000;i+=5000){
+const b=document.createElement("button");
+b.innerText=i;
+b.onclick=()=>{
+document.getElementById("sec"+i).scrollIntoView({behavior:"smooth"});
+};
+document.getElementById("access").appendChild(b);
+}
+
+/* GENERATE */
+
+for(let start=100;start<=50000;start+=5000){
+
+const section=document.createElement("div");
+section.className="section";
+section.id="sec"+(start+4900);
+
+const head=document.createElement("div");
+head.className="section-head";
+
+const title=document.createElement("h3");
+title.innerText="▶ "+start+" - "+(start+4900);
+
+const date=document.createElement("span");
+date.className="section-date";
+date.id="date-"+(start+4900);
+
+head.appendChild(title);
+head.appendChild(date);
+
+const grid=document.createElement("div");
+grid.className="section-grid closed";
+
+head.onclick=()=>{
+grid.classList.toggle("closed");
+title.innerText=(grid.classList.contains("closed")?"▶ ":"▼ ")+start+" - "+(start+4900);
+};
+
+for(let i=start;i<start+5000;i+=100){
+
+const label=document.createElement("label");
+
+const cb=document.createElement("input");
+cb.type="checkbox";
+cb.value=i;
+
+if(saved["n"+i]) cb.checked=true;
+
+const span=document.createElement("span");
+span.innerText=i;
+
+const hover=document.createElement("div");
+hover.className="hover";
+
+const d=localStorage.getItem("date-"+i)||"";
+const note=localStorage.getItem("note-"+i)||"";
+
+hover.innerHTML=d+(note?"<br>📝 "+note:"");
+
+cb.addEventListener("change",()=>{
+undoState=JSON.stringify(saved);
+const val=Number(cb.value);
+animateFill(val,cb.checked);
+
+const today=new Date().toLocaleDateString();
+if(cb.checked){
+localStorage.setItem("date-"+i,today);
+}
+
+play();
+update();
+});
+
+label.ondblclick=()=>{
+const n=prompt("Note for "+i,localStorage.getItem("note-"+i)||"");
+if(n!==null){
+localStorage.setItem("note-"+i,n);
+hover.innerHTML=(localStorage.getItem("date-"+i)||"")+"<br>📝 "+n;
+}
+};
+
+label.appendChild(cb);
+label.appendChild(span);
+label.appendChild(hover);
+
+grid.appendChild(label);
+checkboxes.push(cb);
+}
+
+section.appendChild(head);
+section.appendChild(grid);
+tracker.appendChild(section);
+}
+
+/* ANIMATE */
+
+function animateFill(v,state){
+const boxes=checkboxes.filter(c=>state?Number(c.value)<=v:Number(c.value)>=v);
+boxes.forEach((c,i)=>{
+setTimeout(()=>{
+c.checked=state;
+update();
+},i*2);
+});
+}
+
+/* UPDATE */
+
+function update(){
+
+let checked=0;
+let highest=0;
+
+checkboxes.forEach(cb=>{
+saved["n"+cb.value]=cb.checked;
+if(cb.checked){
+checked++;
+if(Number(cb.value)>highest) highest=Number(cb.value);
+}
+});
+
+localStorage.setItem("checked",JSON.stringify(saved));
+
+const p=Math.round((checked/checkboxes.length)*100);
+
+progress.style.width=p+"%";
+progress.innerText=p+"%";
+progress.dataset.highest=highest;
+
+updateDates();
+applyAges();
+analytics();
+updateMini(); // Keeps Mini status updated whenever main progress changes
+}
+
+/* DATES */
+
+function updateDates(){
+for(let s=5000;s<=50000;s+=5000){
+let d="";
+for(let i=s-4900;i<=s;i+=100){
+if(saved["n"+i]){
+const dt=localStorage.getItem("date-"+i);
+if(dt) d=dt;
+}
+}
+document.getElementById("date-"+s).innerText=d;
+}
+}
+
+/* AGES */
+
+function applyAges(){
+checkboxes.forEach(cb=>{
+const d=localStorage.getItem("date-"+cb.value);
+if(!d) return;
+
+const diff=(Math.abs(new Date()-new Date(d)))/(1000*60*60*24);
+
+cb.parentElement.classList.remove("new","mid","old","veryold");
+
+if(diff<7){
+cb.parentElement.classList.add("new");
+}else if(diff<30){
+cb.parentElement.classList.add("mid");
+}else if(diff<90){
+cb.parentElement.classList.add("old");
+}else{
+cb.parentElement.classList.add("veryold");
+}
+});
+}
+
+/* MINI */
+
+function updateMini(){
+document.getElementById("miniValue").innerText=mini;
+const highest=Number(progress.dataset.highest||0);
+document.getElementById("miniDisplay").innerHTML="Current Total: <b>"+(highest+mini)+"</b>";
+localStorage.setItem("mini",mini);
+analytics();
+}
+
+function miniStep(v){
+mini+=v;
+if(mini<0) mini=0;
+if(mini>=100){
+mini=0;
+quickAdd(100);
+}
+updateMini();
+}
+
+/* QUICK */
+
+function quickAdd(v){
+const highest=Number(progress.dataset.highest||0);
+const target=highest+v;
+const cb=checkboxes.find(c=>Number(c.value)===target);
+
+if(cb){
+cb.checked=true;
+play();
+update();
+}
+}
+
+/* SEARCH */
+
+function jump(){
+let v=document.getElementById("searchBox").value.toLowerCase();
+if(v.includes("k")){
+v=parseFloat(v)*1000;
+}
+v=Math.round(Number(v)/100)*100;
+
+const cb=checkboxes.find(c=>Number(c.value)===v);
+
+if(cb){
+cb.parentElement.scrollIntoView({behavior:"smooth",block:"center"});
+cb.parentElement.style.transform="scale(1.2)";
+setTimeout(()=>{
+cb.parentElement.style.transform="";
+},500);
+}
+}
+
+/* UNDO */
+
+function undo(){
+if(!undoState) return;
+saved=JSON.parse(undoState);
+checkboxes.forEach(cb=>{
+cb.checked=saved["n"+cb.value]||false;
+});
+update();
+}
+
+/* SAVE */
+
+function saveToday(){
+const today=new Date().toISOString().split("T")[0];
+history[today]={
+highest:Number(progress.dataset.highest||0),
+notes:document.getElementById("notes").value
+};
+localStorage.setItem("history",JSON.stringify(history));
+renderHistory();
+calendar();
+}
+
+/* HISTORY */
+
+function renderHistory(){
+const h=document.getElementById("history");
+h.innerHTML="";
+
+Object.keys(history)
+.sort((a,b)=>new Date(b)-new Date(a))
+.forEach(d=>{
+const div=document.createElement("div");
+div.className="entry";
+div.dataset.search=(d+" "+history[d].notes).toLowerCase();
+div.innerHTML=`
+<b>${d}</b><br>
+Highest: ${history[d].highest}<br>
+${history[d].notes}
+`;
+h.appendChild(div);
+});
+}
+
+/* FILTER */
+
+function filterHistory(){
+const q=document.getElementById("searchHistory").value.toLowerCase();
+document.querySelectorAll(".entry").forEach(e=>{
+e.style.display=e.dataset.search.includes(q)?"block":"none";
+});
+}
+
+/* ANALYTICS */
+
+function analytics(){
+const stats=document.getElementById("stats");
+const highest=Number(progress.dataset.highest||0);
+stats.innerHTML="Current: +"+highest+"<br>Mini: +"+mini;
+}
+
+/* CALENDAR */
+
+function calendar(){
+const cal=document.getElementById("calendar");
+cal.innerHTML="";
+
+Object.keys(history).forEach(d=>{
+const v=history[d].highest;
+const div=document.createElement("div");
+div.className="day";
+
+if(v<10000){
+div.classList.add("low");
+}else if(v<30000){
+div.classList.add("mid");
+}else{
+div.classList.add("high");
+}
+
+div.title=d+" : "+v;
+cal.appendChild(div);
+});
+}
+
+/* THEMES */
+
+function setTheme(t){
+if(t==="amoled"){
+document.documentElement.style.setProperty("--bg","#000");
+document.documentElement.style.setProperty("--card","#111");
+}else if(t==="matrix"){
+document.documentElement.style.setProperty("--bg","#031b03");
+document.documentElement.style.setProperty("--card","#053b05");
+document.documentElement.style.setProperty("--accent","#00ff66");
+}else if(t==="light"){
+document.documentElement.style.setProperty("--bg","#f2f2f2");
+document.documentElement.style.setProperty("--card","#fff");
+document.documentElement.style.setProperty("--text","#111");
+}else{
+document.documentElement.style.setProperty("--bg","#13151f");
+document.documentElement.style.setProperty("--card","#232946");
+document.documentElement.style.setProperty("--accent","#7c3aed");
+document.documentElement.style.setProperty("--text","white");
+}
+}
+
+/* SCROLL */
+
+function scrollHighest(){
+const highest=Number(progress.dataset.highest||0);
+const cb=checkboxes.find(c=>Number(c.value)===highest);
+if(cb){
+cb.parentElement.scrollIntoView({behavior:"smooth",block:"center"});
+}
+}
+
+/* MULTIPLAYER */
+
+window.addEventListener("storage",()=>{
+saved=JSON.parse(localStorage.getItem("checked")||"{}");
+history=JSON.parse(localStorage.getItem("history")||"{}");
+checkboxes.forEach(cb=>{
+cb.checked=saved["n"+cb.value]||false;
+});
+renderHistory();
+update();
+});
+
+/* INIT */
+
+update();
+updateMini();
+renderHistory();
+calendar();
+
+</script>
+
+</body>
+</html>
