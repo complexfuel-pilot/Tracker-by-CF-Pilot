@@ -160,6 +160,7 @@ background:#222;
 border-radius:20px;
 overflow:hidden;
 cursor:pointer;
+min-width: 150px;
 }
 
 .progress{
@@ -170,7 +171,10 @@ display:flex;
 align-items:center;
 justify-content:center;
 font-size:12px;
-transition:0.3s;
+font-weight:bold;
+transition:width 0.3s ease;
+color: #fff;
+text-shadow: 0 1px 2px rgba(0,0,0,0.6);
 }
 
 /* SECTION */
@@ -1156,34 +1160,36 @@ function toggleSound(){
 sound=!sound;
 }
 
-/* ACCESS */
+/* ACCESS BUTTONS */
 
 for(let i=5000;i<=50000;i+=5000){
 const b=document.createElement("button");
 b.innerText=i;
 b.onclick=()=>{
-document.getElementById("sec"+i).scrollIntoView({behavior:"smooth"});
+const secElem = document.getElementById("sec"+i);
+if(secElem) secElem.scrollIntoView({behavior:"smooth"});
 };
 document.getElementById("access").appendChild(b);
 }
 
-/* GENERATE TRACKER GRID */
+/* GENERATE TRACKER GRID (FIXED) */
 
 for(let start=100;start<=50000;start+=5000){
 
 const section=document.createElement("div");
 section.className="section";
-section.id="sec"+(start+4900);
+const endVal = start + 4900;
+section.id = "sec" + endVal;
 
 const head=document.createElement("div");
 head.className="section-head";
 
 const title=document.createElement("h3");
-title.innerText="▶ "+start+" - "+(start+4900);
+title.innerText="▶ "+start+" - "+endVal;
 
 const date=document.createElement("span");
 date.className="section-date";
-date.id="date-"+(start+4900);
+date.id="date-"+endVal;
 
 head.appendChild(title);
 head.appendChild(date);
@@ -1193,10 +1199,10 @@ grid.className="section-grid closed";
 
 head.onclick=()=>{
 grid.classList.toggle("closed");
-title.innerText=(grid.classList.contains("closed")?"▶ ":"▼ ")+start+" - "+(start+4900);
+title.innerText=(grid.classList.contains("closed")?"▶ ":"▼ ")+start+" - "+endVal;
 };
 
-for(let i=start;i<start+5000;i+=100){
+for(let i=start;i<=endVal;i+=100){
 
 const label=document.createElement("label");
 
@@ -1252,7 +1258,7 @@ section.appendChild(grid);
 tracker.appendChild(section);
 }
 
-/* ANIMATE */
+/* ANIMATE FILL */
 
 function animateFill(v,state){
 const boxes=checkboxes.filter(c=>state?Number(c.value)<=v:Number(c.value)>=v);
@@ -1264,7 +1270,7 @@ update();
 });
 }
 
-/* UPDATE */
+/* UPDATE PROGRESS & STATES */
 
 function update(){
 
@@ -1281,7 +1287,7 @@ if(Number(cb.value)>highest) highest=Number(cb.value);
 
 localStorage.setItem("checked",JSON.stringify(saved));
 
-const p=Math.round((checked/checkboxes.length)*100);
+const p = checkboxes.length > 0 ? Math.round((checked / checkboxes.length) * 100) : 0;
 
 progress.style.width=p+"%";
 progress.innerText=p+"%";
@@ -1293,7 +1299,7 @@ analytics();
 updateMini();
 }
 
-/* DATES */
+/* DATES (FIXED) */
 
 function updateDates(){
 for(let s=5000;s<=50000;s+=5000){
@@ -1304,7 +1310,8 @@ const dt=localStorage.getItem("date-"+i);
 if(dt) d=dt;
 }
 }
-document.getElementById("date-"+s).innerText=d;
+const dateElem = document.getElementById("date-"+s);
+if(dateElem) dateElem.innerText=d;
 }
 }
 
@@ -1331,7 +1338,7 @@ cb.parentElement.classList.add("veryold");
 });
 }
 
-/* MINI */
+/* MINI PROGRESS */
 
 function updateMini(){
 document.getElementById("miniValue").innerText=mini;
@@ -1351,7 +1358,7 @@ quickAdd(100);
 updateMini();
 }
 
-/* QUICK */
+/* QUICK ADD */
 
 function quickAdd(v){
 const highest=Number(progress.dataset.highest||0);
@@ -1503,7 +1510,7 @@ cb.parentElement.scrollIntoView({behavior:"smooth",block:"center"});
 }
 }
 
-/* MULTIPLAYER / MULTI-TAB SYNC */
+/* MULTI-TAB SYNC */
 
 window.addEventListener("storage",()=>{
 saved=JSON.parse(localStorage.getItem("checked")||"{}");
@@ -1515,7 +1522,7 @@ renderHistory();
 update();
 });
 
-/* INIT SECTION WITH URL RESET SUPPORT */
+/* INIT SYSTEM */
 
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.has('new') || urlParams.has('reset')) {
